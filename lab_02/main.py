@@ -7,12 +7,40 @@ def Show_info():
 	showinfo('Задание', 'Нарисовать дом и реализовать функции: перемещение, маштабирование,вращение, отменить последнее'
 	                    'действие, вернуть исходный рисунок.')
 
+# очистка холста
+def Clean_canvas():
+	canvas.delete("all")
+
+# отрисовка рисунка
+def Draw_graphic():
+	# основа дома
+	canvas.create_polygon(420, 395, 420, 245, 520, 195, 620, 245, 620, 395, outline = 'red', fill = '' ,width = 2)
+	canvas.create_line(420, 245, 620, 245, fill = 'red', width = 2)
+
+	# левое окно
+	canvas.create_oval(450, 275, 490, 315, outline = 'red', width = 2)
+	canvas.create_line(470, 275, 470, 315, fill = 'red', width = 2)
+	canvas.create_line(450, 295, 490, 295, fill = 'red', width = 2)
+
+	# правое окно
+	canvas.create_oval(590, 275, 550, 351, outline = 'red', width = 2)
+	canvas.create_line(590, 313, 550, 313, fill = 'red', width = 2)
+	canvas.create_line(570, 275, 570, 351, fill = 'red', width = 2)
+
+	# верхнее окно
+	canvas.create_polygon(505, 230, 505, 210, 535, 210, 535, 230, outline = 'red', fill = '' ,width = 2)
+	canvas.create_line(505, 220, 535, 220, fill = 'red', width = 2)
+	canvas.create_line(520, 230, 520, 210, fill = 'red', width = 2)
+
+
+# основная функция
 def main():
 	root = Tk()
 	root.resizable(False,False)
 	root.title('Menu')
 	root.geometry('1320x640')
 	# создание холста для отрисовки примитивов
+	global canvas
 	canvas = Canvas(root, width=1040, height=640, bg='#002')
 	canvas.pack(side='right')
 
@@ -68,6 +96,8 @@ def main():
 	btn_return = Button(root, text = 'Вернуть исходный рисунок', width = 37)
 	# btn_return.bind('<Button-1>', lambda event: draw_graphics(root))
 	btn_return.place(x = 5, y = 350)
+
+	Draw_graphic()
 
 	root.mainloop()
 
