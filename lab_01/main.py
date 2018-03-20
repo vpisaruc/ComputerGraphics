@@ -2,12 +2,17 @@ from tkinter import *
 from functions import*
 from tkinter.messagebox import*
 
+# задание
+def Show_info():
+	showinfo('Задание', 'Задано множество точек, найти такой треугольник у которого '
+	                    'разность площади треугольника и описанной окружности будет наименьшей.')
+
 # масштабирование
 def Scaling():
-	min_x = min(array_x)
-	max_x = max(array_x)
-	min_y = min(array_y)
-	max_y = max(array_y)
+	min_x = min(array_coord_x)
+	max_x = max(array_coord_x)
+	min_y = min(array_coord_y)
+	max_y = max(array_coord_y)
 
 	delta_x = max_x - min_x
 	delta_y = max_y - min_y
@@ -24,6 +29,11 @@ def Scaling():
 	zy = (640 - (max_y * koef_y - min_y * koef_y))/2
 	smesh_x = min_x * koef_x - zx
 	smesh_y = min_y * koef_y - zy
+
+	del array_coord_x[len(array_coord_x) - 1]
+	del array_coord_x[len(array_coord_x) - 1]
+	del array_coord_y[len(array_coord_y) - 1]
+	del array_coord_y[len(array_coord_y) - 1]
 
 	return koef_x, koef_y, smesh_x, smesh_y
 
@@ -91,14 +101,7 @@ def draw_graphics(root):
 	elif (min_sq_coordinate == 0):
 		showerror('Error', 'Add more dots, there are less then 3 dots')
 	else:
-		# коэффициент масштабирования
-		koeficients = Scaling()
-		koef_x = koeficients[0]
-		koef_y = koeficients[1]
-		sm_x = koeficients[2]
-		sm_y = koeficients[3]
-		print(sm_x)
-		print(sm_y)
+
 
 
 		# активация кнопки отчистки canvas
@@ -107,17 +110,27 @@ def draw_graphics(root):
 		btn_clean.place(x=5, y=570)
 
 		entry_sq = Entry(root)
-		entry_sq.place(x=138, y=330)
+		entry_sq.place(x=138, y=370)
 		entry_coord = Entry(root)
-		entry_coord.place(x=138, y=370)
+		entry_coord.place(x=138, y=410)
 		entry_sq_circle = Entry(root)
-		entry_sq_circle.place(x=138, y=410)
+		entry_sq_circle.place(x=138, y=450)
 		entry_sq_triangle = Entry(root)
-		entry_sq_triangle.place(x=138, y=450)
+		entry_sq_triangle.place(x=138, y=490)
 		entry_coord_center = Entry(root)
-		entry_coord_center.place(x=138, y=490)
+		entry_coord_center.place(x=138, y=530)
 
 		coord = min_sq_coordinate[1]
+
+		global array_coord_x, array_coord_y
+		array_coord_x = []
+		array_coord_y = []
+
+		for i in range(len(coord)):
+			if i % 2 == 0 or i == 0:
+				array_coord_x.append(coord[i])
+			else:
+				array_coord_y.append(coord[i])
 
 		# координаты треугольника
 		x1 = coord[0]
@@ -139,10 +152,31 @@ def draw_graphics(root):
 		radius = (side1 * side2 * side3) / (4 * triangle_square(side1, side2, side3))
 		circle_sq = pi * (radius ** 2)
 
+		array_coord_x.append(U_x - radius)
+		array_coord_x.append(U_x + radius)
+		array_coord_y.append(U_y - radius)
+		array_coord_y.append(U_y + radius)
+
+		# коэффициент масштабирования
+		koeficients = Scaling()
+		koef_x = koeficients[0]
+		koef_y = koeficients[1]
+		sm_x = koeficients[2]
+		sm_y = koeficients[3]
+
+
+
+
 		global line1, line2, line3, oval1
 		# создание треугольника
 		line1 = canvas.create_line(coord[0]*koef_x - sm_x, coord[1]*koef_y - sm_y,
 		                           coord[2]*koef_x - sm_x, coord[3]*koef_y - sm_y, width = 3, fill = 'yellow')
+		text1 = canvas.create_text(coord[0]*koef_x - sm_x + 10, coord[1]*koef_y - sm_y + 1,
+		                           text = ('(',coord[0],',',coord[1],')'), fill = 'red')
+		text2 = canvas.create_text(coord[2]*koef_x - sm_x + 10, coord[3]*koef_y - sm_y + 1,
+		                           text = ('(',coord[2],',',coord[3],')'), fill = 'red')
+		text3 = canvas.create_text(coord[4]*koef_x - sm_x + 10, coord[5]*koef_y - sm_y + 1,
+		                           text = ('(',coord[4],',',coord[5],')'), fill = 'red')
 		line2 = canvas.create_line(coord[2]*koef_x - sm_x, coord[3]*koef_y - sm_y, coord[4]*koef_x - sm_x,
 		                           coord[5]*koef_y - sm_y, width = 3,fill = 'yellow')
 		line3 = canvas.create_line(coord[0]*koef_x - sm_x, coord[1]*koef_y - sm_y, coord[4]*koef_x - sm_x,
@@ -172,29 +206,28 @@ def draw_graphics(root):
 
 
 def Clean_canvas():
-	canvas.delete(line1)
-	canvas.delete(line2)
-	canvas.delete(line3)
-	canvas.delete(oval1)
+	canvas.delete("all")
 	entry_sq = Entry(root, state='readonly')
-	entry_sq.place(x=138, y=330)
+	entry_sq.place(x=138, y=370)
 	entry_coord = Entry(root, state='readonly')
-	entry_coord.place(x=138, y=370)
+	entry_coord.place(x=138, y=410)
 	entry_sq_circle = Entry(root, state='readonly')
-	entry_sq_circle.place(x=138, y=410)
+	entry_sq_circle.place(x=138, y=450)
 	entry_sq_triangle = Entry(root, state='readonly')
-	entry_sq_triangle.place(x=138, y=450)
+	entry_sq_triangle.place(x=138, y=490)
 	entry_coord_center = Entry(root, state='readonly')
-	entry_coord_center.place(x=138, y=490)
+	entry_coord_center.place(x=138, y=530)
 
 	# дезактивация кнопки Clean canvas
 	btn_clean = Button(root, text='Clean canvas', command=Clean_canvas, width=37, state='disabled')
 	btn_clean.bind('<Button-1>')
 	btn_clean.place(x=5, y=570)
 
+
 def main():
 	# отрисвока меню
 	global canvas, entry_x, entry_y, array_x, array_y, list_box, root
+
 	root = Tk()
 	root.resizable(False,False)
 	root.title('Menu')
@@ -207,62 +240,55 @@ def main():
 	canvas = Canvas(root, width = 1040, height = 640, bg = '#002')
 	canvas.pack(side='right')
 
-	# координатная сетка
-	#canvas.create_line(520, 0, 520, 640, width = 1, arrow = FIRST, fill = 'white') # ось Y
-	#canvas.create_line(0, 310, 1040, 310, width = 1, arrow = LAST, fill = 'white') # ось Х
-
-	#canvas.create_text(533,300, text = '0', fill = 'red')
-
-
 	# создание статических надписей
 	label_x1 = Label(root, text = 'X coordinate: ')
-	label_x1.place(x = 0, y = 10, )
+	label_x1.place(x = 0, y = 50, )
 	label_y1 = Label(root, text = 'Y coordinate: ')
-	label_y1.place(x = 0, y = 50)
+	label_y1.place(x = 0, y = 90)
 	label_sq = Label(root, text='Minimal delta square: ')
-	label_sq.place(x=0, y=330)
-	label_sq = Label(root, text='Triangle coordinates(x,y): ')
 	label_sq.place(x=0, y=370)
+	label_sq = Label(root, text='Triangle coordinates(x,y): ')
+	label_sq.place(x=0, y=410)
 	label_y1 = Label(root, text = 'Circle square: ')
-	label_y1.place(x = 0, y = 410)
+	label_y1.place(x = 0, y = 450)
 	label_sq = Label(root, text='Triangle square: ')
-	label_sq.place(x=0, y=450)
-	label_sq = Label(root, text='Circle center coordinates: ')
 	label_sq.place(x=0, y=490)
+	label_sq = Label(root, text='Circle center coordinates: ')
+	label_sq.place(x=0, y=530)
 	label_changed_x = Label(root, text = 'X')
-	label_changed_x.place(x = 165, y = 220)
+	label_changed_x.place(x = 165, y = 260)
 	label_changed_y = Label(root, text = 'Y')
-	label_changed_y.place(x = 218, y = 220)
+	label_changed_y.place(x = 218, y = 260)
 
 	# создание полей ввода
 	entry_x = Entry(root)
-	entry_x.place(x = 80, y = 10)
+	entry_x.place(x = 80, y = 50)
 	entry_y = Entry(root)
-	entry_y.place(x = 80, y = 50)
+	entry_y.place(x = 80, y = 90)
 	entry_sq = Entry(root, state='readonly')
-	entry_sq.place(x=138, y=330)
+	entry_sq.place(x=138, y=370)
 	entry_coord = Entry(root, state='readonly')
-	entry_coord.place(x=138, y=370)
+	entry_coord.place(x=138, y=410)
 	entry_sq_circle = Entry(root, state='readonly')
-	entry_sq_circle.place(x=138, y=410)
+	entry_sq_circle.place(x=138, y=450)
 	entry_sq_triangle = Entry(root, state='readonly')
-	entry_sq_triangle.place(x=138, y=450)
+	entry_sq_triangle.place(x=138, y=490)
 	entry_coord_center = Entry(root, state='readonly')
-	entry_coord_center.place(x=138, y=490)
+	entry_coord_center.place(x=138, y=530)
 	entry_changed_dot_x = Entry(root)
-	entry_changed_dot_x.place(x = 160, y = 250, width = 25)
+	entry_changed_dot_x.place(x = 160, y = 290, width = 25)
 	entry_changed_dot_y = Entry(root)
-	entry_changed_dot_y.place(x = 213, y = 250, width = 25)
+	entry_changed_dot_y.place(x = 213, y = 290, width = 25)
 
 	# создание кнопок
 	btn_add = Button(root, text = 'Add coordinate', command = Clean_label, width = 17)
 	# создание действия для кнопки
 	btn_add.bind('<Button-1>', lambda event: Add_coordinate(entry_x.get(), entry_y.get()))
-	btn_add.place(x = 5, y = 90)
+	btn_add.place(x = 5, y = 130)
 	btn_del = Button(root, text = 'Delete all dots', width = 17)
 	# создание действия для кнопки
 	btn_del.bind('<Button-1>', lambda event: Delete_all_dots(len(array_x)))
-	btn_del.place(x = 142, y = 90)
+	btn_del.place(x = 142, y = 130)
 	btn_clean = Button(root, text = 'Clean canvas', command = Clean_canvas, width = 37, state='disabled')
 	btn_clean.bind('<Button-1>')
 	btn_clean.place(x = 5, y = 570)
@@ -271,16 +297,19 @@ def main():
 	btn_draw.place(x = 5, y = 600)
 	btn_delete = Button(root, text = 'Delete dot', command = Delete_dot, width = 10)
 	btn_delete.bind('<Button-1>')
-	btn_delete.place(x = 160, y = 150)
+	btn_delete.place(x = 160, y = 190)
 	btn_change = Button(root, text = 'Change dot', width = 10)
 	btn_change.bind('<Button-1>',
 	                lambda event: Change_dot(entry_changed_dot_x.get(), entry_changed_dot_y.get()))
-	btn_change.place(x = 160, y = 180)
+	btn_change.place(x = 160, y = 220)
+	btn_change = Button(root, text='Show task', width=37)
+	btn_change.bind('<Button-1>',lambda event: Show_info())
+	btn_change.place(x=5, y=10)
 
 	#создание пустого списка
 
 	list_box = Listbox(root, yscrollcommand = '.set')
-	list_box.place(x = 5, y = 130)
+	list_box.place(x = 5, y = 170)
 
 	root.mainloop()
 
