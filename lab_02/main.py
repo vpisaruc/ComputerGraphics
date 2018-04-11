@@ -10,6 +10,32 @@ def Show_info():
 						'действие, вернуть исходный рисунок.')
 
 
+def ff(a, b, t):
+	return [-71 + a * cos(t) + ox, -71 + b * sin(t) + oy]
+
+
+def get_ellipse(a, b):
+	points = []
+
+	start = -pi / 2  # Head
+	end = 3 / 2 * pi  # Head
+
+	step = 0.01
+
+	while start < end:
+		points.append(ff(a, b, start))
+		start += step
+	poin = []
+	i = 0
+	k = 0
+	for i in range(len(points)):
+		for j in range(len(points[i])):
+			k = points[i][j]
+			poin.append(k)
+
+	return poin
+
+
 # очистка холста
 def Clean_canvas():
 	canvas.delete("all")
@@ -47,26 +73,18 @@ def image_rotate(angle, x, y):
 	try:
 		Clean_canvas()
 		angle = float(angle)
-		x = float(x)
-		y = float(y)
-		if angle >= 0:
-			angle = (angle * pi)/180     # перевод градусов в радианы
-		else:
-			angle = -(angle * pi)/180
-
-		print(array_coordinate_work)
+		x = float(x) + x0
+		y = float(y) + y0
+		angle = -radians(angle)
 
 		for i in range(len(array_coordinate_work)):
-			for j in range(0, len(array_coordinate_work[i]), 2):
-				array_coordinate_work[i][j] = (array_coordinate_work[i][j] - x)* cos(angle) - \
-											  (array_coordinate_work[i][j + 1] - y) * sin(angle)
-				array_coordinate_work[i][j+1] = (array_coordinate_work[i][j] - x) * sin(angle) + \
-										  (array_coordinate_work[i][j + 1] - y) * cos(angle)
-
-		for i in range(len(array_coordinate_work)):
-			for j in range(0, len(array_coordinate_work[i]), 2):
-				array_coordinate_work[i][j] = array_coordinate_work[i][j] + x
-				array_coordinate_work[i][j+1] = array_coordinate_work[i][j+1] + y
+			for j in range(len(array_coordinate_work[i])):
+				if j % 2 == 0:
+					old_x = array_coordinate_work[i][j]
+					array_coordinate_work[i][j] = x + (old_x - x) * cos(angle) - (array_coordinate_work[i][j + 1] - y) * sin(angle)
+				else:
+					old_y = array_coordinate_work[i][j]
+					array_coordinate_work[i][j] = y + (old_x - x) * sin(angle) + (old_y - y) * cos(angle)
 
 		Draw_graphic(array_coordinate_work)
 	except ValueError:
@@ -111,26 +129,31 @@ def Draw_back(b, n):
 				array_coordinate_work[i][j] = b[i][j]
 
 	Clean_canvas()
+
 	# массивы координат
 	osn = b[0]
-	lw = b[1]
-	rw = b[2]
-	hw = b[3]
+	ln = b[1]
+	lw = b[2]
+	rw = b[3]
+	hw = b[4]
+	lw_l1 = b[5]
+	lw_l2 = b[6]
+	rw_l1 = b[7]
+	rw_l2 = b[8]
 
 	# основа дома
-	canvas.create_polygon(osn[0], osn[1], osn[2], osn[3], osn[4],
-						  osn[5], osn[6], osn[7], osn[8], osn[9], outline='red', fill='', width=2)
-	canvas.create_line(osn[10], osn[11], osn[12], osn[13], fill='red', width=2)
+	canvas.create_polygon(osn, outline='red', fill='', width=2)
+	canvas.create_line(ln, fill='red', width=2)
 
 	# левое окно
-	canvas.create_oval(lw[0], lw[1], lw[2], lw[3], outline='red', width=2)
-	canvas.create_line(lw[4], lw[5], lw[6], lw[7], fill='red', width=2)
-	canvas.create_line(lw[8], lw[9], lw[10], lw[11], fill='red', width=2)
+	canvas.create_polygon(lw, outline='red', fill = '', width=2)
+	canvas.create_line(lw_l1, fill='red', width=2)
+	canvas.create_line(lw_l2, fill='red', width=2)
 
 	# правое окно
-	canvas.create_oval(rw[0], rw[1], rw[2], rw[3], outline='red', width=2)
-	canvas.create_line(rw[4], rw[5], rw[6], rw[7], fill='red', width=2)
-	canvas.create_line(rw[8], rw[9], rw[10], rw[11], fill='red', width=2)
+	canvas.create_polygon(rw, outline='red', fill = '', width=2)
+	canvas.create_line(rw_l1, fill='red', width=2)
+	canvas.create_line(rw_l2, fill='red', width=2)
 
 	# верхнее окно
 	canvas.create_polygon(hw[0], hw[1], hw[2], hw[3], hw[4], hw[5], hw[6], hw[7], outline='red', fill='', width=2)
@@ -143,24 +166,28 @@ def Draw_back(b, n):
 def Draw_graphic(a):
 	# массивы координат
 	osn = a[0]
-	lw = a[1]
-	rw = a[2]
-	hw = a[3]
+	ln = a[1]
+	lw = a[2]
+	rw = a[3]
+	hw = a[4]
+	lw_l1 = a[5]
+	lw_l2 = a[6]
+	rw_l1 = a[7]
+	rw_l2 = a[8]
 
 	# основа дома
-	canvas.create_polygon(osn[0], osn[1], osn[2], osn[3], osn[4],
-						  osn[5], osn[6], osn[7], osn[8], osn[9], outline='red', fill='', width=2)
-	canvas.create_line(osn[10], osn[11], osn[12], osn[13], fill='red', width=2)
+	canvas.create_polygon(osn, outline='red', fill='', width=2)
+	canvas.create_line(ln, fill='red', width=2)
 
 	# левое окно
-	canvas.create_oval(lw[0], lw[1], lw[2], lw[3], outline='red', width=2)
-	canvas.create_line(lw[4], lw[5], lw[6], lw[7], fill='red', width=2)
-	canvas.create_line(lw[8], lw[9], lw[10], lw[11], fill='red', width=2)
+	canvas.create_polygon(lw, outline='red', fill = '', width=2)
+	canvas.create_line(lw_l1, fill='red', width=2)
+	canvas.create_line(lw_l2, fill='red', width=2)
 
 	# правое окно
-	canvas.create_oval(rw[0], rw[1], rw[2], rw[3], outline='red', width=2)
-	canvas.create_line(rw[4], rw[5], rw[6], rw[7], fill='red', width=2)
-	canvas.create_line(rw[8], rw[9], rw[10], rw[11], fill='red', width=2)
+	canvas.create_polygon(rw, outline='red', fill = '', width=2)
+	canvas.create_line(rw_l1, fill='red', width=2)
+	canvas.create_line(rw_l2, fill='red', width=2)
 
 	# верхнее окно
 	canvas.create_polygon(hw[0], hw[1], hw[2], hw[3], hw[4], hw[5], hw[6], hw[7], outline='red', fill='', width=2)
@@ -175,24 +202,10 @@ def main():
 	root.title('Menu')
 	root.geometry('1320x640')
 	# создание холста для отрисовки примитивов
-	global canvas, array_coordinate_work, array_back_os
+	global canvas, x0, y0
 
-	array_back_os = [[420, 395, 420, 245, 520, 195, 620, 245, 620, 395, 420, 245, 620, 245],
-					 [450, 275, 490, 315,470, 275, 470, 315, 450, 295, 490, 295],
-					 [590, 275, 550, 351, 590, 313, 550, 313, 570, 275, 570, 351],
-					 [505, 230, 505, 210, 535, 210, 535, 230, 505, 220, 535, 220, 520, 230, 520, 210]]
-
-	# изначальные координаты рисунка
-	array_coordinate_work = [[420, 395, 420, 245, 520, 195, 620, 245, 620, 395, 420, 245, 620, 245],
-							 [450, 275, 490, 315,470, 275, 470, 315, 450, 295, 490, 295],
-							 [590, 275, 550, 351, 590, 313, 550, 313, 570, 275, 570, 351],
-							 [505, 230, 505, 210, 535, 210, 535, 230, 505, 220, 535, 220, 520, 230, 520, 210]]
-
-	# координаты  для возвращения рисунка в изначальное состояние
-	array_coordinate_back = [[420, 395, 420, 245, 520, 195, 620, 245, 620, 395, 420, 245, 620, 245],
-							 [450, 275, 490, 315,470, 275, 470, 315, 450, 295, 490, 295],
-							 [590, 275, 550, 351, 590, 313, 550, 313, 570, 275, 570, 351],
-							 [505, 230, 505, 210, 535, 210, 535, 230, 505, 220, 535, 220, 520, 230, 520, 210]]
+	x0 = 520
+	y0 = 320
 
 	canvas = Canvas(root, width=1040, height=640, bg='#002')
 	canvas.pack(side='right')
