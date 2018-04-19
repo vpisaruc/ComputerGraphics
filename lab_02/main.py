@@ -7,34 +7,7 @@ from math import*
 # задание
 def Show_info():
 	showinfo('Задание', 'Нарисовать дом и реализовать функции: перемещение, маштабирование,вращение, отменить последнее'
-						'действие, вернуть исходный рисунок.')
-
-
-def ff(a, b, t):
-	return [-71 + a * cos(t) + ox, -71 + b * sin(t) + oy]
-
-
-def get_ellipse(a, b):
-	points = []
-
-	start = -pi / 2  # Head
-	end = 3 / 2 * pi  # Head
-
-	step = 0.01
-
-	while start < end:
-		points.append(ff(a, b, start))
-		start += step
-	poin = []
-	i = 0
-	k = 0
-	for i in range(len(points)):
-		for j in range(len(points[i])):
-			k = points[i][j]
-			poin.append(k)
-
-	return poin
-
+						'действие, вернуть исходный рисунок. \nОсь X направлена направо, ось Y направленна вниз.')
 
 # очистка холста
 def Clean_canvas():
@@ -71,10 +44,13 @@ def image_moving(coef_x, coef_y):
 # поворот изображения
 def image_rotate(angle, x, y):
 	try:
-		Clean_canvas()
 		angle = float(angle)
 		x = float(x) + x0
 		y = float(y) + y0
+
+		Clean_canvas()
+		create_tmp_array(array_coordinate_work)
+
 		angle = -radians(angle)
 
 		for i in range(len(array_coordinate_work)):
@@ -94,10 +70,12 @@ def image_rotate(angle, x, y):
 
 
 # масштабирование изображения
-def image_scaling(coef_x, coef_y):
+def image_scaling(coef_x, coef_y, x_centr, y_centr):
 	try:
 		coef_x = float(coef_x)
 		coef_y = float(coef_y)
+		x_centr = float(x_centr)
+		y_centr = float(y_centr)
 		Clean_canvas()
 		create_tmp_array(array_coordinate_work)
 
@@ -111,11 +89,11 @@ def image_scaling(coef_x, coef_y):
 		else:
 			for j in range(len(array_coordinate_work)):
 				for i in range(0, len(array_coordinate_work[j]), 2):
-					array_coordinate_work[j][i] = array_coordinate_work[j][i] * coef_x - smesh_x
+					array_coordinate_work[j][i] = array_coordinate_work[j][i] * coef_x - smesh_x - x_centr
 
 			for j in range(len(array_coordinate_work)):
 				for i in range(1, len(array_coordinate_work[j]), 2):
-					array_coordinate_work[j][i] = array_coordinate_work[j][i] * coef_y - smesh_y
+					array_coordinate_work[j][i] = array_coordinate_work[j][i] * coef_y - smesh_y - y_centr
 
 		Draw_graphic(array_coordinate_work)
 	except ValueError:
@@ -215,16 +193,20 @@ def main():
 	label_x_move.place(x=50, y=50, )
 	label_y_move = Label(root, text='Y ')
 	label_y_move.place(x=200, y=50)
-	label_x_scale = Label(root, text='X ')
+	label_x_scale = Label(root, text='X_koef ')
 	label_x_scale.place(x=50, y=145, )
-	label_y_scale = Label(root, text='Y ')
+	label_y_scale = Label(root, text='Y_koef ')
 	label_y_scale.place(x=200, y=145)
+	label_x_centr = Label(root, text='X_centr ')
+	label_x_centr.place(x=50, y=240, )
+	label_y_centr = Label(root, text='Y_centr ')
+	label_y_centr.place(x=200, y=240)
 	label_y_scale = Label(root, text='Y ')
-	label_y_scale.place(x=200, y=240)
+	label_y_scale.place(x=200, y=335)
 	label_x_scale = Label(root, text='X ')
-	label_x_scale.place(x=50, y=240, )
+	label_x_scale.place(x=50, y=335, )
 	label_rotate = Label(root, text='Введите угол поворота в градусах: ')
-	label_rotate.place(x=15, y=335)
+	label_rotate.place(x=15, y=430)
 
 	# создание полей ввода
 	entry_x_move = Entry(root)
@@ -239,14 +221,20 @@ def main():
 	entry_y_scale = Entry(root)
 	entry_y_scale.place(x=165, y=170, width=90)
 
+	entry_x_centr = Entry(root)
+	entry_x_centr.place(x=15, y=265, width=90)
+
+	entry_y_centr = Entry(root)
+	entry_y_centr.place(x=165, y=265, width=90)
+
 	entry_x_rotate = Entry(root)
-	entry_x_rotate.place(x=15, y=265, width=90)
+	entry_x_rotate.place(x=15, y=360, width=90)
 
 	entry_y_rotate = Entry(root)
-	entry_y_rotate.place(x=165, y=265, width=90)
+	entry_y_rotate.place(x=165, y=360, width=90)
 
 	entry_rotate = Entry(root)
-	entry_rotate.place(x=210, y=335, width=60)
+	entry_rotate.place(x=210, y=430, width=60)
 
 	# создание кнопок
 	btn_task = Button(root, text='Задание', width=37)
@@ -258,21 +246,22 @@ def main():
 	btn_move.place(x=65, y=105)
 
 	btn_scale = Button(root, text='Масштабировать', width=20)
-	btn_scale.bind('<Button-1>', lambda event: image_scaling(entry_x_scale.get(), entry_y_scale.get()))
-	btn_scale.place(x=65, y=200)
+	btn_scale.bind('<Button-1>', lambda event: image_scaling(entry_x_scale.get(), entry_y_scale.get(),
+															 entry_x_centr.get(), entry_y_centr.get()))
+	btn_scale.place(x=65, y=295)
 
 	btn_rotate = Button(root, text='Повернуть', width=20)
 	btn_rotate.bind('<Button-1>',
 					lambda event:image_rotate(entry_rotate.get(), entry_x_rotate.get(), entry_y_rotate.get()))
-	btn_rotate.place(x=65, y=365)
+	btn_rotate.place(x=65, y=460)
 
 	btn_cancel = Button(root, text='Отменить последнее действие', width=37)
 	btn_cancel.bind('<Button-1>', lambda event: Draw_back(array_back_os, 0))
-	btn_cancel.place(x=5, y=405)
+	btn_cancel.place(x=5, y=500)
 
 	btn_return = Button(root, text='Вернуть исходный рисунок', width=37)
 	btn_return.bind('<Button-1>', lambda event: Draw_back(array_coordinate_back, 1))
-	btn_return.place(x=5, y=445)
+	btn_return.place(x=5, y=540)
 
 	Draw_graphic(array_coordinate_work)
 

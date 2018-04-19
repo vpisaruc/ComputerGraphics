@@ -14,8 +14,8 @@ def f(a, b, t):
 def get_ellipse_1(a, b):
 	points = []
 
-	start = -pi / 2  # Head
-	end = 3 / 2 * pi  # Head
+	start = -pi / 2
+	end = 3 / 2 * pi
 
 	step = 0.01
 
