@@ -7,7 +7,8 @@ from math import*
 # задание
 def Show_info():
 	showinfo('Задание', 'Нарисовать дом и реализовать функции: перемещение, маштабирование,вращение, отменить последнее'
-						'действие, вернуть исходный рисунок. \nОсь X направлена направо, ось Y направленна вниз.')
+						'действие, вернуть исходный рисунок. \nОсь X направлена направо, ось Y направленна вниз. '
+						'\nКоордината (0,0) в центре канваса.')
 
 # очистка холста
 def Clean_canvas():
@@ -189,9 +190,9 @@ def main():
 	canvas.pack(side='right')
 
 	# создание статических надписей
-	label_x_move = Label(root, text='X ')
+	label_x_move = Label(root, text='dX ')
 	label_x_move.place(x=50, y=50, )
-	label_y_move = Label(root, text='Y ')
+	label_y_move = Label(root, text='dY ')
 	label_y_move.place(x=200, y=50)
 	label_x_scale = Label(root, text='X_koef ')
 	label_x_scale.place(x=50, y=145, )
